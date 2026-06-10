@@ -1,0 +1,3841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Series Interface</title>
+  <style>
+:root {
+  --bg-top: #f8f4e8;
+  --bg-bottom: #dce9ea;
+  --card: #fffdf7;
+  --ink: #1f353b;
+  --muted: #5e6b6f;
+  --accent: #0f7f85;
+  --accent-strong: #066269;
+  --warning: #d98a2f;
+  --danger: #b64937;
+  --soft-border: #d1e1e1;
+  --shadow: 0 14px 35px rgba(20, 54, 59, 0.14);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(165deg, var(--bg-top), var(--bg-bottom));
+  line-height: 1.45;
+  position: relative;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Palatino Linotype", Cambria, Georgia, serif;
+  margin: 0;
+  color: #13272d;
+}
+
+p {
+  margin: 0;
+}
+
+.bg-shape {
+  position: fixed;
+  border-radius: 999px;
+  opacity: 0.35;
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.bg-shape-one {
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle at 30% 30%, #88c6b5, #5fa5a4);
+  top: -120px;
+  right: -80px;
+}
+
+.bg-shape-two {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle at 40% 40%, #f0c698, #e79b63);
+  left: -150px;
+  bottom: -180px;
+}
+
+.app-shell {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 28px 18px 42px;
+  position: relative;
+  z-index: 2;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.brand-block {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.org-series-banner {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(15, 127, 133, 0.13), rgba(217, 138, 47, 0.2));
+  border: 1px solid rgba(15, 127, 133, 0.3);
+  box-shadow: 0 10px 24px rgba(15, 127, 133, 0.14);
+}
+
+.org-series-title {
+  font-size: clamp(20px, 2.7vw, 34px);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  background: linear-gradient(118deg, #0f7f85, #cb6b20 52%, #0e9da6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shell-test-subtitle {
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  max-width: 760px;
+  overflow-wrap: anywhere;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.header-meta {
+  text-align: right;
+  color: var(--muted);
+  font-size: 14px;
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.header-link {
+  color: var(--accent-strong);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.header-link:hover {
+  text-decoration: underline;
+}
+
+.header-context-line {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 420px;
+}
+
+.telegram-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid #2f87cc;
+  background: linear-gradient(135deg, #2e9be2, #1e78ca);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 22px rgba(30, 120, 202, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.telegram-admin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(30, 120, 202, 0.42);
+  filter: brightness(1.03);
+}
+
+.safety-card {
+  margin-top: 12px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid #f2c58c;
+  background: linear-gradient(180deg, #fff7ec, #fff2de);
+  color: #64401b;
+  font-size: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.warning-link,
+.dev-link {
+  color: #0567a9;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.warning-link:hover,
+.dev-link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-admin-btn {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.developer-note {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.theme-toggle-btn {
+  min-width: 118px;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--soft-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.start-card {
+  max-width: 820px;
+  margin: 18px auto 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.summary-item {
+  background: #f2f7f7;
+  border-radius: var(--radius-md);
+  border: 1px solid #dbe9e9;
+  padding: 12px;
+}
+
+.summary-item p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.summary-item h3 {
+  font-size: 22px;
+}
+
+.instruction-box {
+  border: 1px dashed #9ab9b7;
+  border-radius: var(--radius-md);
+  background: #edf7f6;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+}
+
+.instruction-box ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #27444a;
+}
+
+.instruction-box li {
+  margin: 6px 0;
+}
+
+.btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease, background-color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-primary {
+  background: linear-gradient(130deg, var(--accent), #12a3a8);
+  color: #ffffff;
+}
+
+.btn-danger {
+  background: linear-gradient(130deg, var(--danger), #de6551);
+  color: #ffffff;
+}
+
+.btn-warning {
+  background: linear-gradient(130deg, var(--warning), #e6a54e);
+  color: #ffffff;
+}
+
+.btn-ghost {
+  background: #edf2f2;
+  color: #294347;
+}
+
+.test-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+}
+
+.left-panel {
+  position: sticky;
+  top: 12px;
+  height: fit-content;
+}
+
+.candidate-name {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.live-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.live-stats article {
+  background: #f3f8f8;
+  border: 1px solid #d8e6e6;
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.live-stats p {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.live-stats h3 {
+  font-size: 20px;
+}
+
+.legend {
+  margin: 16px 0 10px;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #325056;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot-not-visited {
+  background: #b5c5c6;
+}
+
+.dot-not-answered {
+  background: #e2b95f;
+}
+
+.dot-answered {
+  background: #3f9d70;
+}
+
+.dot-review {
+  background: #d77a3e;
+}
+
+.dot-answered-review {
+  background: #2f88b4;
+}
+
+.palette-title {
+  margin: 12px 0 10px;
+}
+
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.palette-btn {
+  border: 1px solid #c5d8d9;
+  border-radius: 10px;
+  padding: 8px 6px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #24454b;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: palette-in 0.3s ease forwards;
+  animation-delay: calc(var(--i, 0) * 20ms);
+}
+
+.palette-btn.active {
+  outline: 2px solid #16363c;
+}
+
+.palette-btn.status-not-visited {
+  background: #e6eff0;
+}
+
+.palette-btn.status-not-answered {
+  background: #f8dfad;
+}
+
+.palette-btn.status-answered {
+  background: #c8ebd7;
+}
+
+.palette-btn.status-review {
+  background: #f4d1b7;
+}
+
+.palette-btn.status-answered-review {
+  background: #cbe4f2;
+}
+
+.right-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.top-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.section-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.section-tab {
+  border: 1px solid #b7cccc;
+  background: #eef6f6;
+  color: #27474d;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.section-tab.active {
+  background: #d3eceb;
+  border-color: #8bb9b8;
+  font-weight: 700;
+}
+
+.timer-pill {
+  display: grid;
+  text-align: right;
+}
+
+.timer-pill span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.timer-pill strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.question-card {
+  min-height: 360px;
+}
+
+.question-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.type-pill {
+  border-radius: 999px;
+  background: #e6f3f3;
+  border: 1px solid #bdd7d7;
+  color: #20484f;
+  padding: 5px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.question-body {
+  margin-top: 12px;
+  border-top: 1px solid #d9e7e7;
+  padding-top: 14px;
+}
+
+.option-body {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.question-body img,
+.option-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.option-label {
+  border: 1px solid #ccdcdc;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  background: #fbfefd;
+}
+
+.option-label:hover {
+  border-color: #8eb8b8;
+}
+
+.option-input {
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+
+.fill-input {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 12px;
+  border: 1px solid #b8cccc;
+  padding: 11px 12px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.fill-input:focus {
+  outline: 2px solid rgba(15, 127, 133, 0.2);
+  border-color: #6aa5a7;
+}
+
+.action-card {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.report-layout {
+  display: grid;
+  gap: 12px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #d9e8e8;
+  text-align: left;
+  padding: 8px 9px;
+  font-size: 13px;
+}
+
+th {
+  color: #36565c;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+
+.review-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.review-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  border: 1px solid #bcd3d3;
+  border-radius: 999px;
+  background: #eef6f6;
+  color: #25464c;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background: #d7ecec;
+  border-color: #85b2b3;
+  font-weight: 700;
+}
+
+.review-list {
+  display: grid;
+  gap: 12px;
+}
+
+.review-item {
+  border: 1px solid #cfe0e0;
+  border-radius: 14px;
+  background: #f9fcfc;
+  padding: 12px;
+}
+
+.review-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.status-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 8px;
+}
+
+.status-correct {
+  background: #cbebd8;
+  color: #1f6042;
+}
+
+.status-incorrect {
+  background: #f5d4cd;
+  color: #7f3528;
+}
+
+.status-partial {
+  background: #f8e4bc;
+  color: #815f20;
+}
+
+.status-unattempted {
+  background: #dde9ea;
+  color: #3a565b;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.answer-grid article {
+  background: #eef6f6;
+  border: 1px solid #d5e6e6;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.answer-grid p {
+  font-size: 12px;
+  color: #415f65;
+}
+
+.answer-grid h4 {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.review-options {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.review-option {
+  border: 1px solid #d5e5e5;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #f1f7f7;
+}
+
+.review-option-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.review-option-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.tag-correct {
+  background: #ccebd9;
+  color: #1f5f42;
+}
+
+.tag-selected {
+  background: #cce3f2;
+  color: #234f6b;
+}
+
+.solution-block {
+  margin-top: 10px;
+  border: 1px solid #cfe1e1;
+  border-radius: 12px;
+  background: #f2f8f8;
+  padding: 10px;
+}
+
+.solution-label {
+  font-size: 12px;
+  color: #35585e;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.solution-html img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+body.theme-dark {
+  --bg-top: #0f1724;
+  --bg-bottom: #141c2b;
+  --card: #1a2435;
+  --ink: #e8f0ff;
+  --muted: #aab8cc;
+  --accent: #44b2b7;
+  --accent-strong: #74d6db;
+  --soft-border: #33465f;
+  --shadow: 0 14px 35px rgba(2, 8, 18, 0.45);
+}
+
+body.theme-dark h1,
+body.theme-dark h2,
+body.theme-dark h3,
+body.theme-dark h4 {
+  color: #eff5ff;
+}
+
+body.theme-dark .summary-item,
+body.theme-dark .live-stats article,
+body.theme-dark .section-tab,
+body.theme-dark .type-pill,
+body.theme-dark .option-label,
+body.theme-dark .review-item,
+body.theme-dark .answer-grid article,
+body.theme-dark .review-option,
+body.theme-dark .solution-block,
+body.theme-dark .btn-ghost,
+body.theme-dark .filter-btn {
+  background: #223048;
+  color: #dce8fa;
+  border-color: #3a506f;
+}
+
+body.theme-dark .instruction-box,
+body.theme-dark .empty-state {
+  background: #1f3048;
+  border-color: #49617f;
+  color: #d5e4fa;
+}
+
+body.theme-dark .palette-btn.status-not-visited {
+  background: #2a3b56;
+  color: #d8e5f9;
+}
+
+body.theme-dark .palette-btn.status-not-answered {
+  background: #5a4b30;
+  color: #f2dfb5;
+}
+
+body.theme-dark .palette-btn.status-answered {
+  background: #254f3d;
+  color: #d0efd8;
+}
+
+body.theme-dark .palette-btn.status-review {
+  background: #5a3f2f;
+  color: #ffd9c0;
+}
+
+body.theme-dark .palette-btn.status-answered-review {
+  background: #2b4861;
+  color: #d5ecff;
+}
+
+body.theme-dark .header-link {
+  color: #8fd7dd;
+}
+
+body.theme-dark .header-context-line {
+  color: #9db6bb;
+}
+
+body.theme-dark .org-series-banner {
+  background: linear-gradient(135deg, rgba(66, 129, 171, 0.22), rgba(193, 132, 67, 0.25));
+  border-color: #4a6f90;
+  box-shadow: 0 10px 24px rgba(8, 18, 30, 0.4);
+}
+
+body.theme-dark .org-series-title {
+  background: linear-gradient(118deg, #86d8dd, #f0b26f 54%, #95e5eb);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+body.theme-dark .shell-test-subtitle {
+  color: #dce8fa;
+}
+
+body.theme-dark .telegram-admin-btn {
+  border-color: #5ca8ea;
+  background: linear-gradient(135deg, #2f88cf, #2769ad);
+}
+
+body.theme-dark .safety-card {
+  border-color: #81623a;
+  background: linear-gradient(180deg, #3a2f23, #2f241a);
+  color: #f0d4aa;
+}
+
+body.theme-dark .warning-link,
+body.theme-dark .dev-link {
+  color: #93ceff;
+}
+
+body.theme-dark .question-body,
+body.theme-dark th,
+body.theme-dark td {
+  border-color: #3d5371;
+}
+
+body.theme-dark .fill-input {
+  background: #1e2b40;
+  border-color: #496182;
+  color: #eaf2ff;
+}
+
+body.theme-dark .modal-card {
+  background: #1c283a;
+  border-color: #3a506d;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(18, 33, 38, 0.4);
+  z-index: 40;
+}
+
+.modal-card {
+  width: min(460px, 92vw);
+  background: #fffdf7;
+  border-radius: 18px;
+  border: 1px solid #d0e0e0;
+  padding: 18px;
+}
+
+.modal-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.fatal-error {
+  background: #fce4df;
+  border: 1px solid #efb8ad;
+  border-radius: 12px;
+  padding: 12px;
+  color: #7f3528;
+}
+
+.empty-state {
+  border: 1px dashed #b6cbcb;
+  border-radius: 12px;
+  padding: 14px;
+  color: #46666c;
+  background: #f3f8f8;
+}
+
+.reveal {
+  animation: rise-in 0.45s ease both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes palette-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .test-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .left-panel {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .top-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .timer-pill {
+    text-align: left;
+  }
+
+  .answer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-row {
+    justify-content: stretch;
+  }
+
+  .action-row .btn {
+    width: 100%;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="bg-shape bg-shape-one"></div>
+  <div class="bg-shape bg-shape-two"></div>
+
+  <main class="app-shell">
+    <header class="app-header reveal">
+      <div class="brand-block">
+        <div class="org-series-banner">
+          <p class="eyebrow">Official Test Interface</p>
+          <h1 id="shell-org-title" class="org-series-title">TEST SERIES</h1>
+        </div>
+        <p id="shell-test-name" class="shell-test-subtitle">Loading Test...</p>
+      </div>
+      <div class="header-meta">
+        <p id="header-user">
+          <a
+            id="header-user-link"
+            class="header-link"
+            href="https://t.me/bijzli"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Redirect to t.me/bijzli"
+          >BIJZLI</a>
+        </p>
+        <a
+          id="header-admin-link"
+          class="telegram-admin-btn"
+          href="https://t.me/bijzli"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Redirect to Telegram admin @bijzli"
+        >Telegram Admin</a>
+        <p id="header-context" class="header-context-line"></p>
+        <p class="developer-note">
+          Developer:
+          <a
+            class="dev-link"
+            href="https://t.me/bijzli"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Redirect to t.me/bijzli"
+          >BIJZLI</a>
+        </p>
+        <button id="theme-toggle-btn" class="btn btn-ghost theme-toggle-btn" type="button">Dark Mode</button>
+      </div>
+    </header>
+
+    <section id="fatal-error" class="fatal-error hidden"></section>
+
+    <section id="start-screen" class="screen active reveal">
+      <div class="card start-card">
+        <p class="eyebrow">Simulation Mode</p>
+        <h2 id="start-test-name">Test Name</h2>
+        <p id="start-user-name" class="muted">Candidate</p>
+        <p id="start-context-line" class="muted"></p>
+        <div class="summary-grid">
+          <article class="summary-item">
+            <p>Total Questions</p>
+            <h3 id="start-total-questions">0</h3>
+          </article>
+          <article class="summary-item">
+            <p>Total Sections</p>
+            <h3 id="start-total-sections">0</h3>
+          </article>
+          <article class="summary-item">
+            <p>Duration</p>
+            <h3 id="start-duration">00:00:00</h3>
+          </article>
+        </div>
+        <div class="instruction-box">
+          <h3>Instructions</h3>
+          <ul>
+            <li>`Save & Next` stores answer and moves to next question.</li>
+            <li>`Mark for Review` flags question for later revision.</li>
+            <li>Palette colors show question state in real time.</li>
+            <li>Submission opens a full section-wise report and answer review.</li>
+          </ul>
+        </div>
+        <button id="start-test-btn" class="btn btn-primary">Start Test</button>
+      </div>
+    </section>
+
+    <section id="test-screen" class="screen">
+      <div class="test-layout">
+        <aside class="card left-panel reveal">
+          <h2>Candidate Panel</h2>
+          <p class="candidate-name" id="candidate-name">-</p>
+          <p class="muted">User ID: <span id="candidate-id">-</span></p>
+          <p class="muted">Org ID: <span id="candidate-org">-</span></p>
+          <p class="muted">Batch: <span id="candidate-batch">-</span></p>
+          <p class="muted">Subject: <span id="candidate-subject">-</span></p>
+          <div class="safety-card">
+            <p>This interface is given free. Beware of scammers.</p>
+            <p>
+              Any issue:
+              <a
+                class="warning-link"
+                href="https://t.me/bijzli"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Redirect to t.me/bijzli"
+              >contact BIJZLI on Telegram</a>.
+            </p>
+          </div>
+          <a
+            class="telegram-admin-btn sidebar-admin-btn"
+            href="https://t.me/bijzli"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Redirect to Telegram admin @bijzli"
+          >Chat with Admin @BIJZLI</a>
+          <p class="developer-note">
+            Built and maintained by
+            <a
+              class="dev-link"
+              href="https://t.me/bijzli"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Redirect to t.me/bijzli"
+            >BIJZLI</a>.
+          </p>
+
+          <div class="live-stats">
+            <article>
+              <p>Answered</p>
+              <h3 id="live-answered">0</h3>
+            </article>
+            <article>
+              <p>Not Answered</p>
+              <h3 id="live-not-answered">0</h3>
+            </article>
+            <article>
+              <p>Review</p>
+              <h3 id="live-review">0</h3>
+            </article>
+          </div>
+
+          <div class="legend">
+            <div><span class="dot dot-not-visited"></span>Not Visited</div>
+            <div><span class="dot dot-not-answered"></span>Not Answered</div>
+            <div><span class="dot dot-answered"></span>Answered</div>
+            <div><span class="dot dot-review"></span>Marked</div>
+            <div><span class="dot dot-answered-review"></span>Answered + Marked</div>
+          </div>
+
+          <h3 class="palette-title">Question Palette</h3>
+          <div id="palette-grid" class="palette-grid"></div>
+        </aside>
+
+        <section class="right-panel">
+          <div class="card top-toolbar reveal">
+            <div id="section-tabs" class="section-tabs"></div>
+            <div class="timer-pill">
+              <span>Time Left</span>
+              <strong id="timer-value">00:00:00</strong>
+            </div>
+            <button id="submit-btn" class="btn btn-danger">Submit</button>
+          </div>
+
+          <article class="card question-card reveal">
+            <div class="question-head">
+              <h2 id="question-title">Question</h2>
+              <span id="question-type" class="type-pill">Type</span>
+            </div>
+            <p id="question-section-name" class="muted"></p>
+            <div id="question-body" class="question-body"></div>
+            <div id="option-body" class="option-body"></div>
+          </article>
+
+          <div class="card action-card reveal">
+            <div class="action-row">
+              <button id="prev-btn" class="btn btn-ghost">Previous</button>
+              <button id="clear-btn" class="btn btn-ghost">Clear Response</button>
+              <button id="mark-review-btn" class="btn btn-warning">Mark for Review & Next</button>
+              <button id="save-next-btn" class="btn btn-primary">Save & Next</button>
+              <button id="next-btn" class="btn btn-ghost">Next</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="report-screen" class="screen">
+      <div class="report-layout">
+        <article class="card reveal">
+          <p class="eyebrow">Result Summary</p>
+          <h2 id="report-title">Test Report</h2>
+          <p id="report-subtitle" class="muted"></p>
+          <div id="report-summary-grid" class="summary-grid"></div>
+        </article>
+
+        <article class="card reveal">
+          <h3>Section-wise Analysis</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Total</th>
+                  <th>Attempted</th>
+                  <th>Correct</th>
+                  <th>Incorrect</th>
+                  <th>Partial</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody id="section-report-body"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="review-head">
+            <h3>Question Review</h3>
+            <div id="review-filters" class="review-filters"></div>
+          </div>
+          <div id="review-list" class="review-list"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <div id="submit-modal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Submit Test?</h3>
+      <p id="submit-modal-text">You can still return and review answers.</p>
+      <div class="modal-actions">
+        <button id="cancel-submit-btn" class="btn btn-ghost">Back</button>
+        <button id="confirm-submit-btn" class="btn btn-danger">Submit Now</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+window.TEST_SERIES_DATA = {
+  "status": "success",
+  "data": {
+    "test": {
+      "name": "Test ID - 27 [COA Test 2] - 2025",
+      "testTotalDuration": 3600000,
+      "settings": {
+        "fonts": {},
+        "isSectionSwitchingEnabled": true
+      },
+      "practiceTestUrls": []
+    },
+    "filters": {
+      "incorrect": 0,
+      "correct": 0,
+      "partiallyMarked": 0,
+      "unattempted": 1,
+      "markForReview": 0,
+      "graceMarked": 0,
+      "revaluated": 0
+    },
+    "timeTaken": 3000,
+    "showReportQuestion": true,
+    "sectionWiseStats": [
+      {
+        "marksScored": 0,
+        "sectionMarks": 50,
+        "accuracy": 0,
+        "_id": "6993503dd3a3670d8c1aaf6d",
+        "totalQuestions": 25,
+        "attemptDuration": 3000,
+        "correctAnswers": 0,
+        "inCorrectAnswers": 0,
+        "partiallyCorrectAnswers": 0,
+        "unAttempted": 25,
+        "name": "Test ID - 27 [COA Test 2] - 2025",
+        "order": 1,
+        "sectionDuration": 0,
+        "sectionId": "66bc99e6541e065d2323280a"
+      }
+    ],
+    "sections": [
+      {
+        "optionalQuestionSettings": {
+          "marks": {
+            "positive": 4,
+            "negative": 0
+          },
+          "totalQuestions": 25,
+          "totalCompulsoryQuestions": 24,
+          "totalSectionMarks": 96
+        },
+        "draftMode": false,
+        "isActive": true,
+        "sectionDuration": 0,
+        "sectionMarks": 50,
+        "sectionInstructions": " ",
+        "hasOptionalQuestions": false,
+        "_id": "66bc99e6541e065d2323280a",
+        "name": "Test ID - 27 [COA Test 2] - 2025",
+        "order": 1,
+        "createdAt": "2024-12-18T13:20:59.389Z",
+        "updatedAt": "2024-12-18T13:20:59.389Z",
+        "questions": [
+          {
+            "_id": "66bc99e6541e06f37323280d",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/a3342642-b5ee-4b78-be99-096ff4d89b53.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 1,
+            "questionSubmitOrder": 1,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f902746b072646589",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": true,
+                "_id": "66a8c70f90274621e064658a",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f9027467cee64658b",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": true,
+                "_id": "66a8c70f9027469e9b64658c",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/bde00f4e-ce39-4a42-96df-0ea77f3bca46.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/6f2358af-208b-4a05-9087-fa797e25aa75.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": true,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 3000,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e0612ed23280e",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/785a5bfd-4ff3-4174-b544-b384df20a8a7.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 2,
+            "questionSubmitOrder": 2,
+            "options": [
+              {
+                "solution": [
+                  "3"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f902746d6f36465b8",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/d93b5bcf-f0e6-4f81-ba13-3a9e767c5357.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e069f2023280f",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/51f1ae16-5e5f-42bb-9535-1d3b7def53d1.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 3,
+            "questionSubmitOrder": 3,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f9027463bc46465a2",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": true,
+                "_id": "66a8c70f902746497d6465a3",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f90274663026465a4",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f9027469a006465a5",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/3bf5b152-6b1b-4901-a4b2-f3b2ed5ba8fb.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06ee53232811",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/df03069b-7755-44af-9eff-32c8063eb416.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 4,
+            "questionSubmitOrder": 4,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f902746f70c646597",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": false,
+                "_id": "66a8c70f902746cf97646598",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f9027466858646599",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": true,
+                "_id": "66a8c70f902746e54864659a",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/8c7c8fae-2366-46fe-a96e-054a11a9ab72.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/3c6ab757-f333-429c-be79-ec6c429da31a.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06d42d232810",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/ae703378-1b3b-43be-8949-769fc4665f48.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 5,
+            "questionSubmitOrder": 5,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f9027462595646581",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": true,
+                "_id": "66a8c70f902746bc4e646582",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f902746abb1646583",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f902746bb73646584",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/4ef178ff-2206-4a81-b045-df5dbb909d5c.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e067640232815",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/a55f01d5-169f-4553-a518-095c4b183240.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 6,
+            "questionSubmitOrder": 6,
+            "options": [
+              {
+                "solution": [
+                  "2"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f902746195964659f",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/192adca3-bb8c-429a-8f59-260b62697c05.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e0614a6232813",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/412379d9-39b2-4229-b126-7dc486e3ca72.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 7,
+            "questionSubmitOrder": 7,
+            "options": [
+              {
+                "solution": [
+                  "1024"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f9027462aa96465bb",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/16251782-4088-4fc4-85c2-9b9f882fad0e.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e065378232816",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/bc847ac7-c255-4f45-9bc8-9db8ffaa3512.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 8,
+            "questionSubmitOrder": 8,
+            "options": [
+              {
+                "solution": [
+                  "1344"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f9027460bf8646595",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/f504ff52-e996-44f2-8c2b-cf9743783f32.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/7c44cbec-6a26-4b64-8c1c-5421fc8157b6.png\" alt=\"\" />&nbsp; &nbsp;</p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06ac69232814",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/cbeff3c6-712b-4729-b2c7-baecd3595bef.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 9,
+            "questionSubmitOrder": 9,
+            "options": [
+              {
+                "solution": [
+                  "9"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f902746695a6465ae",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/fd10ac70-2644-46c1-8cc5-3801899a3b05.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e069c22232812",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/eb855313-9ab3-48ba-92a5-00450cab12be.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 10,
+            "questionSubmitOrder": 10,
+            "options": [
+              {
+                "solution": [
+                  "132"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f90274652496465b9",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/d1b30f86-457c-40e7-8b4c-b58103c2a733.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e069911232817",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/fb49c405-093a-46c0-98f7-f4827b61aab1.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 11,
+            "questionSubmitOrder": 11,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f902746d2ca6465b0",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": true,
+                "_id": "66a8c70f9027467aa06465b1",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f9027467c256465b2",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f9027469f666465b3",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/acb8bf14-baee-4432-aa41-791d1ab87d9a.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06808c232818",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/27cb9655-1d2c-418a-9395-0fa6a4554fc0.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 12,
+            "questionSubmitOrder": 12,
+            "options": [
+              {
+                "solution": [
+                  "11"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f90274641d66465a0",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/7d11d5a1-a352-46b8-a16d-fdcfb24ccaa6.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06c68d232819",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/74948b46-9acb-479d-9f7c-f3786d9232da.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 13,
+            "questionSubmitOrder": 13,
+            "options": [
+              {
+                "solution": [
+                  "6"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f9027463d526465bc",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/581229e2-56b0-4b25-ba82-577941a7b5a5.png\" alt=\"\" /></p>\n<p></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/8222d529-435e-4d08-b0f3-f6d141e09071.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/aaca8414-de8e-4714-9b0a-98d335882834.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e067e9423281b",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/7f8145eb-3ef4-46fa-854c-c03e894fd13a.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 14,
+            "questionSubmitOrder": 14,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f902746133064658d",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": true,
+                "_id": "66a8c70f902746c65f64658e",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": true,
+                "_id": "66a8c70f9027464e8b64658f",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f9027466685646590",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/360f0997-68e2-4179-bb32-4482f09fb2a5.png\" alt=\"\" /></p>\n<p></p>",
+            "hasMultipleAnswers": true,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06cecd23281a",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/029e5c7e-9680-4daf-a004-fe8f0c5d8a74.png\" alt=\"\" />&nbsp;</p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "\u00a0",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 15,
+            "questionSubmitOrder": 15,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": true,
+                "_id": "66a8c70f90274695e16465a6",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": false,
+                "_id": "66a8c70f90274655f86465a7",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": true,
+                "_id": "66a8c70f902746cdec6465a8",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": true,
+                "_id": "66a8c70f902746de5e6465a9",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/33fe4e29-b11f-40fa-985e-2d41af0472d7.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/eb4c56a4-bef3-4721-b11f-5a2c13c008ae.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/edf3c14f-cf92-4c41-8425-0b2cf1f3a87f.png\" alt=\"\" /></p>\n<p></p>\n<p></p>",
+            "hasMultipleAnswers": true,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06482f23281c",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/c9692c4e-041d-4b17-94b8-0c3e5a13cbd3.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 16,
+            "questionSubmitOrder": 16,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f902746cf6b6465b4",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": true,
+                "_id": "66a8c70f90274685956465b5",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": true,
+                "_id": "66a8c70f90274677106465b6",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f90274616086465b7",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/92fa2073-1ae0-4fec-9b15-60a846be800c.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/bc9a9663-ae5b-44b1-82e0-8f96a1ca536c.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": true,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06a98923281d",
+            "name": "<p>&nbsp;<img style=\"font-family: var(--font-family);\" src=\"https://cms-cdn.classplus.co/parserImages/c1da8dde-ebad-465e-a0d1-c2c95169c2c7.png\" alt=\"\" /><img id=\"2\" style=\"font-family: var(--font-family);\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "\u00a0",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 17,
+            "questionSubmitOrder": 17,
+            "options": [
+              {
+                "solution": [
+                  "2"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f90274670cb646596",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/f05f936a-6c7d-487e-841a-4a8e52a00563.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06046023281e",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/3ba9a1ac-946e-4e7b-acd8-676eecab17b2.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 18,
+            "questionSubmitOrder": 18,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f9027462b2764659b",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": false,
+                "_id": "66a8c70f90274638c764659c",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": true,
+                "_id": "66a8c70f902746932564659d",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f90274642e664659e",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/19961bc3-62d6-4eb0-aab4-b1be40b9b1c7.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06f90923281f",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/6388b256-a5ca-440f-ac6d-de91bd0af846.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": " ",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 19,
+            "questionSubmitOrder": 19,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f9027466e21646585",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": false,
+                "_id": "66a8c70f902746df92646586",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": true,
+                "_id": "66a8c70f9027466335646587",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": false,
+                "_id": "66a8c70f9027468e37646588",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/09593c6c-bd06-45c3-b3cf-fc77aac24f54.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/7b6a35b7-8a38-46ea-8766-dd69d9d60ada.png\" alt=\"\" /></p>\n<p></p>\n<p></p>\n<p></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e064711232820",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/e1fc1b5d-ed3b-4138-82da-60c6697a5423.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 20,
+            "questionSubmitOrder": 20,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f9027461c5a646591",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": false,
+                "_id": "66a8c70f90274641cc646592",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f902746e203646593",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": true,
+                "_id": "66a8c70f902746d875646594",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/2a03a3e7-9891-4195-af3d-4018542a4b3a.png\" alt=\"\" /></p>\n<p><img src=\"https://cms-cdn.classplus.co/parserImages/c26ca14b-9b80-41ca-ac1d-c7584fef5fd7.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e063d18232823",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/cce1ef71-6d39-4940-9c54-7bb73160b0b9.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 21,
+            "questionSubmitOrder": 21,
+            "options": [
+              {
+                "solution": [
+                  "63.5"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f902746248a6465af",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/de750e89-728d-4448-811e-39e814fb844c.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06d2a3232822",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/b0a3bc7e-0384-4533-8e0f-66d46a2a2b18.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 22,
+            "questionSubmitOrder": 22,
+            "options": [
+              {
+                "solution": [
+                  "22"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f902746a67e6465ba",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/85e137f7-7dc6-4beb-8923-d457ec88f514.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06eb03232824",
+            "name": "<p>&nbsp;<img style=\"font-family: var(--font-family);\" src=\"https://cms-cdn.classplus.co/parserImages/08f74521-7d56-4523-b486-4b5bd70ac007.png\" alt=\"\" /><img id=\"2\" style=\"font-family: var(--font-family);\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "\u00a0",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 23,
+            "questionSubmitOrder": 23,
+            "options": [
+              {
+                "solution": [
+                  "21"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f90274609a36465a1",
+                "cap": "",
+                "floor": "",
+                "nameText": "21",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/1d2b774c-8a54-4e48-aabd-151d81b1583f.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06cd22232821",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/8117647f-155c-4d20-bbf5-d37cebe41a42.png\" alt=\"\" /><img id=\"2\" src=\"https://cdn-wl-assets.classplus.co/production/single/vlvkc/04254bd5-3730-4db2-9fba-adc9289f1cf9.jpeg\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 24,
+            "questionSubmitOrder": 24,
+            "options": [
+              {
+                "solution": [
+                  "15"
+                ],
+                "isCorrect": true,
+                "type": "constants",
+                "_id": "66a8c70f90274648da6465bd",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA8MAAAD/CAYAAADVJQR9AAAgAElEQVR4nOzd74sT994//me+XHc9bZLeKl6yZFI4clq2XGa3xRMLK7gT1yKK2sSjFEFxm1iEHlvX7lpE2lWTnlaQNmvEhaVYnZxVFNE0uwtbuJKK3Y2yoS0ecBOKePVWxmj7B8z3xn5mmslMNjPZrLua5wMC7mR+vGfe74nzmvcvh6IoCoiIiIiIiIhayP+31AkgIiIiIiIietoYDBMREREREVHLYTBMRERERERELYfBMBEREREREbUcBsNERERERETUchgMExERERERUcthMExEREREREQth8EwERERERERtRwGw0RERERERNRyGAwTERERERFRy2EwTERERERERC2HwTARERERERG1HFvBcD6fh8Ph0D75fH6x0kVERERERES0aGwFw2NjY/P+TfXFYjHtZYKZYrGoe+FQ/YnFYk85xURERERERM8fW8Hw6OgoACAcDuv+pvnJsgxJkuD1etHX1zfvur/99ttTShUREREREVHrciiKolhZsVgsQhAEAMDMzAxef/11AEChUIDH41m8FD4HKq+d0+lEuVwGAJhd+mw2i3Xr1kEURaTT6aeaTiIiIiIiolZhuWZ4amoKACCKItrb2w3LqTaPxwNBEHDp0iVcv359qZNDRERERETU8iwHw9euXQMArF+/HsBcUFy5vFI2m9X1i02lUvB6vXA4HPB6vZAkybBNLBZDR0eHtl1HR4euf2zl4F2VA3dVLu/o6NDtMxQKweFwIBKJ6JZLkqQ7VigUQjabNaRJ/T6bzSKRSMDr9Wppquz7a7ZttdnZWYRCobrrERERERER0eKzHAwnk0kAwNq1awH8GRQnk0nIslxzu1gshk2bNqFQKACYa1a9c+dOXUA7MDCAvr4+FAoFiKIIURSRy+XQ19eHgYEBAEB7ezucTicA4Pbt29q2lf/O5XK6tORyOQDA22+/rS2LRCLYuXOn7ljJZBLr1q0zDdIB4KuvvsJ7772nncPTogbzaqBvJegmIiIiIiKi+iwFw6lUSvu33+8H8GfNMAD8+OOPNbc9deoUzp49C0VRcOnSJW155UjUQ0NDAIALFy4gnU4jnU7j7Nmz8Pl8un2pNavff/+9tkz9d39/PwDg3r17AOb66arB6xtvvKGdx9DQEJxOJ77//nvtWJlM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6cRf/vIXXXkoFML4+HjRPIxEIhgdHT101wy3t7fD6XRWvB1ILfj5/79kMonV1VVcuHChrsc9SPj5r96tW7fQ0dFxaDK1Gj0HCu0UPselnzGbzYZwOIyzZ89q86JQN5VK4dSpUzWN88yZM5idndUyCNLptHb9s1nl5l+h3z6fD9evX9+zFOk//elP+Pjjj01nI0xMTODKlSt70hciqt2OwXAhVfndd98tW6e9vR0Wi6ViyrLdbofD4cD169cr/jNTz3bfdF1dXQgEAvjJT34CSZJM/ZMbjUYxNjYGSZLqvjNuKZvNpn0r2traCkmScPnyZdy+fbuqDc5GR0fLXpu9fSVh+zXdi4uLRT93GLS3t2N5eRnr6+toaWmBJEn49NNPtZSyAkVRcPv2bXz++eeQJAktLS24c+dO1ffHLFW4Vm1gYACSJKGnpwdHjx7FtWvXAEAXlIVCIW1zFavVqhvH8vKy9v4sLy9jY2OjqnS406dPm7pmf7/nRTgcNtw1erf4+f//539lZQVbW1va5+Iw7uHAz38xM5//hw8fYnFxsWy9N00j50BhN+nW1la0tLRgc3MTqVRKF9wV2rp8+TIkSUJraysA4NGjRzWnpY+MjKCnpwculwuSJGFwcBCXLl1Cb28vVldXTR2j3Pwr6O7uhs/nq6mPO+0XU1D6t2b7ozQzpjBf9/p3MhFVTxIHcZcjIqI3TCwWw4sXL2reUIaIqFG8Xi+uXr16aFbUjbjdbly5cmXfA9DCbtOHYXM3osPI1G7SRES0M0VR8Pz586bZOIyI6KAqbGy134Ew8DqVf2pqioEw0QHFYJiIqE7C4TA3RyEi2iderxeSJOHx48cH5jZ+IyMjTbH7PdGbimnSRERERERE1HS4MkxERERERERNh8EwERERERERNR0Gw0RERERERNR0GAwTERERERFR02EwTERERERERE2HwTARERERERE1HQbDRERERERE1HQYDBMREREREVHTYTBMRERERERETYfBMBERERERETUdBsNERERERETUdBgMExERERERUdNhMEyHVj6fh6IoyOfz+90VOsDi8Thisdh+d4OIiIiIGozBMB1aw8PDuHTpEmw22353hQ6wvr4+3L17F8lkcr+7QkREREQNVHUw7Ha7IUkSstls2TrJZBKSJMFqtVY8XiQSgSRJ8Hq9u2pXVVVIklTxoapq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\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "fill_ups",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          },
+          {
+            "_id": "66bc99e6541e06bef0232825",
+            "name": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/77aea391-dc02-4431-9200-8f979e46f9f0.png\" alt=\"\" /></p>",
+            "isComprehension": false,
+            "paragraph": null,
+            "paragraphText": null,
+            "fillUpsAnswers": [],
+            "nameText": "",
+            "sectionId": "66bc99e6541e065d2323280a",
+            "order": 25,
+            "questionSubmitOrder": 25,
+            "options": [
+              {
+                "name": "<p>a</p>",
+                "nameText": "a",
+                "isCorrect": false,
+                "_id": "66a8c70f90274689af6465aa",
+                "isMarked": false
+              },
+              {
+                "name": "<p>b</p>",
+                "nameText": "b",
+                "isCorrect": false,
+                "_id": "66a8c70f902746d08c6465ab",
+                "isMarked": false
+              },
+              {
+                "name": "<p>c</p>",
+                "nameText": "c",
+                "isCorrect": false,
+                "_id": "66a8c70f902746ec746465ac",
+                "isMarked": false
+              },
+              {
+                "name": "<p>d</p>",
+                "nameText": "d",
+                "isCorrect": true,
+                "_id": "66a8c70f902746ccb66465ad",
+                "isMarked": false
+              }
+            ],
+            "solution": "<p><img src=\"https://cms-cdn.classplus.co/parserImages/7604546c-64c7-4cc0-a75e-8a9f1b723a16.png\" alt=\"\" /></p>",
+            "hasMultipleAnswers": false,
+            "type": "multiple_choice",
+            "isAttempted": false,
+            "isPartiallyCorrect": false,
+            "isCorrect": false,
+            "isGraceMarked": false,
+            "isReevaluated": false,
+            "marks": {
+              "positive": 0,
+              "negative": 0
+            },
+            "timeTaken": 0,
+            "markForReview": false,
+            "isGpscType": false,
+            "isSurrendered": false,
+            "difficultyLevel": null
+          }
+        ],
+        "numberOfQuestions": 25
+      }
+    ],
+    "userDetails": {
+      "name": "BIJZLI",
+      "userId": "@BIJZLI",
+      "orgId": "@BIJZLI"
+    },
+    "sts": 1771271112522,
+    "region": {
+      "timeFormat": "hh:mm a",
+      "dateTimeStamp": "yyyy/MM/dd"
+    },
+    "context": {
+      "orgCode": "fbjdx",
+      "orgName": "Gate at Zeal",
+      "batchCode": "ts2xgu8j",
+      "batchName": "Test Series 2025",
+      "subjectName": "Test Series",
+      "chapterName": "Test ID - 27 [COA Test 2] - 2025"
+    }
+  },
+  "message": "Student Tests Fetched Successfully"
+};
+</script>
+<script>
+"use strict";
+
+const state = {
+  payload: null,
+  data: null,
+  test: null,
+  user: null,
+  context: null,
+  sections: [],
+  flatQuestions: [],
+  currentSectionIndex: 0,
+  currentQuestionIndexBySection: [],
+  responses: new Map(),
+  totalDurationMs: 0,
+  initialRemainingMs: 0,
+  remainingMs: 0,
+  endTimeMs: 0,
+  timerHandle: null,
+  started: false,
+  submitted: false,
+  report: null,
+  reviewFilter: "all",
+};
+
+const els = {};
+const THEME_KEY = "test-ui-theme";
+const DISPLAY_PROFILE = {
+  name: "BIJZLI",
+  userId: "@BIJZLI",
+  orgId: "@BIJZLI",
+};
+
+document.addEventListener("DOMContentLoaded", init);
+
+async function init() {
+  cacheElements();
+  applySavedTheme();
+  updateThemeToggleLabel();
+  bindEvents();
+
+  try {
+    const payload = await loadPayload();
+    initializeState(payload);
+    renderStartScreen();
+    showScreen("start");
+  } catch (error) {
+    showFatalError(error.message);
+  }
+}
+
+function cacheElements() {
+  els.startScreen = document.getElementById("start-screen");
+  els.testScreen = document.getElementById("test-screen");
+  els.reportScreen = document.getElementById("report-screen");
+
+  els.fatalError = document.getElementById("fatal-error");
+
+  els.shellOrgTitle = document.getElementById("shell-org-title");
+  els.shellTestName = document.getElementById("shell-test-name");
+  els.headerUser = document.getElementById("header-user");
+  els.headerUserLink = document.getElementById("header-user-link");
+  els.headerContext = document.getElementById("header-context");
+  els.themeToggleBtn = document.getElementById("theme-toggle-btn");
+
+  els.startTestName = document.getElementById("start-test-name");
+  els.startUserName = document.getElementById("start-user-name");
+  els.startContextLine = document.getElementById("start-context-line");
+  els.startTotalQuestions = document.getElementById("start-total-questions");
+  els.startTotalSections = document.getElementById("start-total-sections");
+  els.startDuration = document.getElementById("start-duration");
+  els.startTestBtn = document.getElementById("start-test-btn");
+
+  els.candidateName = document.getElementById("candidate-name");
+  els.candidateId = document.getElementById("candidate-id");
+  els.candidateOrg = document.getElementById("candidate-org");
+  els.candidateBatch = document.getElementById("candidate-batch");
+  els.candidateSubject = document.getElementById("candidate-subject");
+
+  els.liveAnswered = document.getElementById("live-answered");
+  els.liveNotAnswered = document.getElementById("live-not-answered");
+  els.liveReview = document.getElementById("live-review");
+
+  els.paletteGrid = document.getElementById("palette-grid");
+  els.sectionTabs = document.getElementById("section-tabs");
+  els.timerValue = document.getElementById("timer-value");
+  els.submitBtn = document.getElementById("submit-btn");
+
+  els.questionTitle = document.getElementById("question-title");
+  els.questionType = document.getElementById("question-type");
+  els.questionSectionName = document.getElementById("question-section-name");
+  els.questionBody = document.getElementById("question-body");
+  els.optionBody = document.getElementById("option-body");
+
+  els.prevBtn = document.getElementById("prev-btn");
+  els.clearBtn = document.getElementById("clear-btn");
+  els.markReviewBtn = document.getElementById("mark-review-btn");
+  els.saveNextBtn = document.getElementById("save-next-btn");
+  els.nextBtn = document.getElementById("next-btn");
+
+  els.submitModal = document.getElementById("submit-modal");
+  els.submitModalText = document.getElementById("submit-modal-text");
+  els.cancelSubmitBtn = document.getElementById("cancel-submit-btn");
+  els.confirmSubmitBtn = document.getElementById("confirm-submit-btn");
+
+  els.reportTitle = document.getElementById("report-title");
+  els.reportSubtitle = document.getElementById("report-subtitle");
+  els.reportSummaryGrid = document.getElementById("report-summary-grid");
+  els.sectionReportBody = document.getElementById("section-report-body");
+  els.reviewFilters = document.getElementById("review-filters");
+  els.reviewList = document.getElementById("review-list");
+}
+
+function bindEvents() {
+  els.themeToggleBtn.addEventListener("click", () => toggleTheme());
+  els.startTestBtn.addEventListener("click", () => startTest());
+  els.prevBtn.addEventListener("click", () => onPrevious());
+  els.nextBtn.addEventListener("click", () => onNext());
+  els.saveNextBtn.addEventListener("click", () => onSaveAndNext());
+  els.markReviewBtn.addEventListener("click", () => onMarkForReviewAndNext());
+  els.clearBtn.addEventListener("click", () => onClearResponse());
+  els.submitBtn.addEventListener("click", () => openSubmitModal());
+
+  els.cancelSubmitBtn.addEventListener("click", () => closeSubmitModal());
+  els.confirmSubmitBtn.addEventListener("click", () => finalizeTest(false));
+
+  els.submitModal.addEventListener("click", (event) => {
+    if (event.target === els.submitModal) {
+      closeSubmitModal();
+    }
+  });
+
+  els.sectionTabs.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-section-index]");
+    if (!btn) {
+      return;
+    }
+    const sectionIndex = Number(btn.dataset.sectionIndex);
+    switchSection(sectionIndex);
+  });
+
+  els.paletteGrid.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-question-index]");
+    if (!btn) {
+      return;
+    }
+    const questionIndex = Number(btn.dataset.questionIndex);
+    jumpToQuestion(state.currentSectionIndex, questionIndex);
+  });
+
+  els.reviewFilters.addEventListener("click", (event) => {
+    const btn = event.target.closest("button[data-filter]");
+    if (!btn) {
+      return;
+    }
+    state.reviewFilter = btn.dataset.filter;
+    renderReviewFilters();
+    renderReviewList();
+  });
+}
+
+async function loadPayload() {
+  if (window.TEST_SERIES_DATA && typeof window.TEST_SERIES_DATA === "object") {
+    return window.TEST_SERIES_DATA;
+  }
+  throw new Error("Embedded test payload missing in this HTML file.");
+}
+
+function initializeState(payload) {
+  if (!payload || payload.status !== "success" || !payload.data) {
+    throw new Error("Unexpected test payload.");
+  }
+
+  const sections = (payload.data.sections || [])
+    .slice()
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+    .map((section) => ({
+      ...section,
+      questions: (section.questions || [])
+        .slice()
+        .sort((a, b) => (a.order || 0) - (b.order || 0)),
+    }));
+
+  if (sections.length === 0) {
+    throw new Error("No sections found in payload.");
+  }
+
+  state.payload = payload;
+  state.data = payload.data;
+  state.test = payload.data.test || {};
+  state.user = payload.data.userDetails || {};
+  state.context = payload.data.context || {};
+  state.sections = sections;
+  state.currentSectionIndex = Math.max(
+    0,
+    sections.findIndex((section) => section.isActive)
+  );
+  state.currentQuestionIndexBySection = sections.map(() => 0);
+  state.responses = new Map();
+  state.flatQuestions = [];
+  state.submitted = false;
+  state.started = false;
+  state.report = null;
+  state.reviewFilter = "all";
+
+  let globalIndex = 1;
+  sections.forEach((section, sectionIndex) => {
+    section.questions.forEach((question, questionIndex) => {
+      state.flatQuestions.push({
+        sectionIndex,
+        questionIndex,
+        questionId: question._id,
+        globalIndex,
+      });
+      state.responses.set(question._id, {
+        selectedOptionIds: [],
+        fillAnswer: "",
+        visited: false,
+        markedForReview: Boolean(question.markForReview),
+      });
+      globalIndex += 1;
+    });
+  });
+
+  const rawDuration = Number(state.test.testTotalDuration);
+  const elapsed = Number(payload.data.timeTaken) || 0;
+
+  state.totalDurationMs = Number.isFinite(rawDuration) && rawDuration > 0 ? rawDuration : 3600000;
+  state.remainingMs = Math.max(state.totalDurationMs - elapsed, 0);
+  if (state.remainingMs === 0) {
+    state.remainingMs = state.totalDurationMs;
+  }
+  state.initialRemainingMs = state.remainingMs;
+}
+
+function renderStartScreen() {
+  const totalQuestions = state.flatQuestions.length;
+  const context = getContextInfo();
+  const contextLine = formatContextLine(context);
+  const orgSeriesLabel = buildOrgSeriesLabel(context);
+
+  if (els.shellOrgTitle) {
+    els.shellOrgTitle.textContent = orgSeriesLabel;
+  }
+  els.shellTestName.textContent = state.test.name || "Untitled Test";
+  if (els.headerUserLink) {
+    els.headerUserLink.textContent = DISPLAY_PROFILE.name;
+    els.headerUserLink.title = "Redirect to t.me/bijzli";
+  }
+  if (els.headerContext) {
+    els.headerContext.textContent = contextLine;
+  }
+
+  els.startTestName.textContent = state.test.name || "Untitled Test";
+  els.startUserName.textContent = `${DISPLAY_PROFILE.name} | User ID: ${DISPLAY_PROFILE.userId}`;
+  if (els.startContextLine) {
+    els.startContextLine.textContent = contextLine;
+  }
+  els.startTotalQuestions.textContent = String(totalQuestions);
+  els.startTotalSections.textContent = String(state.sections.length);
+  els.startDuration.textContent = formatDuration(state.totalDurationMs);
+}
+
+function startTest() {
+  if (state.started) {
+    return;
+  }
+  state.started = true;
+  markCurrentQuestionVisited();
+  syncCandidatePanel();
+  renderTestScreen();
+  showScreen("test");
+  startTimer();
+}
+
+function syncCandidatePanel() {
+  const context = getContextInfo();
+  els.candidateName.textContent = DISPLAY_PROFILE.name;
+  els.candidateId.textContent = DISPLAY_PROFILE.userId;
+  els.candidateOrg.textContent = context.orgName || context.orgCode || DISPLAY_PROFILE.orgId;
+  if (els.candidateBatch) {
+    els.candidateBatch.textContent = context.batchName || context.batchCode || "-";
+  }
+  if (els.candidateSubject) {
+    els.candidateSubject.textContent = context.subjectName || context.chapterName || "-";
+  }
+}
+
+function getContextInfo() {
+  const ctx = state.context || {};
+  return {
+    orgCode: cleanLabel(ctx.orgCode || ctx.org_code),
+    orgName: cleanLabel(ctx.orgName || ctx.org_name),
+    batchCode: cleanLabel(ctx.batchCode || ctx.batch_code),
+    batchName: cleanLabel(ctx.batchName || ctx.batch_name),
+    subjectName: cleanLabel(ctx.subjectName || ctx.subject_name),
+    chapterName: cleanLabel(ctx.chapterName || ctx.chapter_name),
+  };
+}
+
+function formatContextLine(context) {
+  const parts = [];
+  if (context.orgName) {
+    parts.push(`Org: ${context.orgName}`);
+  } else if (context.orgCode) {
+    parts.push(`Org: ${context.orgCode.toUpperCase()}`);
+  }
+  if (context.batchName) {
+    parts.push(`Batch: ${context.batchName}`);
+  } else if (context.batchCode) {
+    parts.push(`Batch: ${context.batchCode}`);
+  }
+  if (context.subjectName) {
+    parts.push(`Subject: ${context.subjectName}`);
+  } else if (context.chapterName) {
+    parts.push(`Chapter: ${context.chapterName}`);
+  }
+  return parts.join(" | ");
+}
+
+function buildOrgSeriesLabel(context) {
+  const orgName = cleanLabel(context.orgName);
+  const orgCode = cleanLabel(context.orgCode);
+  const orgBase = orgName || (orgCode ? orgCode.toUpperCase() : "");
+  if (!orgBase) {
+    return "TEST SERIES";
+  }
+  if (/test\s*series/i.test(orgBase)) {
+    return orgBase;
+  }
+  return `${orgBase} TEST SERIES`;
+}
+
+function showScreen(screen) {
+  els.startScreen.classList.remove("active");
+  els.testScreen.classList.remove("active");
+  els.reportScreen.classList.remove("active");
+
+  if (screen === "start") {
+    els.startScreen.classList.add("active");
+  } else if (screen === "test") {
+    els.testScreen.classList.add("active");
+  } else if (screen === "report") {
+    els.reportScreen.classList.add("active");
+  }
+}
+
+function startTimer() {
+  if (state.timerHandle) {
+    clearInterval(state.timerHandle);
+  }
+  state.endTimeMs = Date.now() + state.remainingMs;
+  renderTimer();
+
+  state.timerHandle = setInterval(() => {
+    state.remainingMs = Math.max(state.endTimeMs - Date.now(), 0);
+    renderTimer();
+
+    if (state.remainingMs <= 0) {
+      finalizeTest(true);
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (state.timerHandle) {
+    clearInterval(state.timerHandle);
+    state.timerHandle = null;
+  }
+}
+
+function renderTimer() {
+  els.timerValue.textContent = formatDuration(state.remainingMs);
+}
+
+function renderTestScreen() {
+  renderSectionTabs();
+  renderPalette();
+  renderQuestion();
+  renderLiveStats();
+}
+
+function renderSectionTabs() {
+  const canSwitchSections = state.test.settings?.isSectionSwitchingEnabled !== false;
+  els.sectionTabs.innerHTML = "";
+
+  state.sections.forEach((section, sectionIndex) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "section-tab";
+    if (sectionIndex === state.currentSectionIndex) {
+      button.classList.add("active");
+    }
+    button.dataset.sectionIndex = String(sectionIndex);
+    button.textContent = `S${sectionIndex + 1}`;
+    button.title = section.name || `Section ${sectionIndex + 1}`;
+    if (!canSwitchSections && sectionIndex !== state.currentSectionIndex) {
+      button.disabled = true;
+    }
+    els.sectionTabs.appendChild(button);
+  });
+}
+
+function renderPalette() {
+  const section = getCurrentSection();
+  els.paletteGrid.innerHTML = "";
+
+  section.questions.forEach((question, questionIndex) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `palette-btn status-${getQuestionStatus(question)}`;
+    button.dataset.questionIndex = String(questionIndex);
+    button.style.setProperty("--i", String(questionIndex));
+    button.textContent = String(questionIndex + 1);
+
+    if (questionIndex === state.currentQuestionIndexBySection[state.currentSectionIndex]) {
+      button.classList.add("active");
+    }
+    els.paletteGrid.appendChild(button);
+  });
+}
+
+function renderQuestion() {
+  const section = getCurrentSection();
+  const question = getCurrentQuestion();
+  if (!question) {
+    return;
+  }
+  const globalIndex = getGlobalQuestionIndex(question._id);
+  const total = state.flatQuestions.length;
+
+  els.questionTitle.textContent = `Question ${globalIndex} of ${total}`;
+  els.questionType.textContent = getQuestionTypeLabel(question);
+  els.questionSectionName.textContent = section.name || `Section ${state.currentSectionIndex + 1}`;
+
+  const pieces = [];
+  if (question.paragraph) {
+    pieces.push(question.paragraph);
+  }
+  if (question.name) {
+    pieces.push(question.name);
+  } else if (question.nameText) {
+    pieces.push(`<p>${escapeHtml(question.nameText)}</p>`);
+  }
+  els.questionBody.innerHTML = pieces.join("") || "<p>No question content available.</p>";
+
+  renderOptions(question);
+  updateNavButtonState();
+}
+function renderOptions(question) {
+  const response = getResponse(question._id);
+  els.optionBody.innerHTML = "";
+
+  if (question.type === "fill_ups") {
+    const wrapper = document.createElement("div");
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "fill-input";
+    input.placeholder = "Type your answer";
+    input.value = response.fillAnswer;
+    input.addEventListener("input", () => {
+      response.fillAnswer = input.value;
+      renderPalette();
+      renderLiveStats();
+    });
+    wrapper.appendChild(input);
+    els.optionBody.appendChild(wrapper);
+    return;
+  }
+
+  const inputType = question.hasMultipleAnswers ? "checkbox" : "radio";
+  const name = `question-${question._id}`;
+
+  (question.options || []).forEach((option, index) => {
+    const label = document.createElement("label");
+    label.className = "option-label";
+
+    const input = document.createElement("input");
+    input.type = inputType;
+    input.name = name;
+    input.value = option._id;
+    input.className = "option-input";
+    input.checked = response.selectedOptionIds.includes(option._id);
+
+    input.addEventListener("change", () => {
+      syncChoiceAnswer(question);
+      renderPalette();
+      renderLiveStats();
+    });
+
+    const body = document.createElement("div");
+    const prefix = document.createElement("strong");
+    prefix.textContent = `${String.fromCharCode(65 + index)}. `;
+
+    const text = document.createElement("span");
+    const optionHtml = option.name || `<p>${escapeHtml(option.nameText || "")}</p>`;
+    text.innerHTML = optionHtml;
+
+    body.appendChild(prefix);
+    body.appendChild(text);
+    label.appendChild(input);
+    label.appendChild(body);
+    els.optionBody.appendChild(label);
+  });
+}
+
+function updateNavButtonState() {
+  els.prevBtn.disabled = getPreviousLocation() === null;
+  const nextLocation = getNextLocation();
+  els.nextBtn.disabled = nextLocation === null;
+  els.saveNextBtn.disabled = nextLocation === null;
+  els.markReviewBtn.disabled = nextLocation === null;
+}
+
+function onPrevious() {
+  captureCurrentAnswer();
+  const prev = getPreviousLocation();
+  if (prev) {
+    jumpToQuestion(prev.sectionIndex, prev.questionIndex);
+  }
+}
+
+function onNext() {
+  captureCurrentAnswer();
+  const next = getNextLocation();
+  if (next) {
+    jumpToQuestion(next.sectionIndex, next.questionIndex);
+  } else {
+    openSubmitModal();
+  }
+}
+
+function onSaveAndNext() {
+  captureCurrentAnswer();
+  const current = getCurrentQuestion();
+  const response = getResponse(current._id);
+  response.markedForReview = false;
+  const next = getNextLocation();
+  if (next) {
+    jumpToQuestion(next.sectionIndex, next.questionIndex);
+  } else {
+    openSubmitModal();
+  }
+}
+
+function onMarkForReviewAndNext() {
+  captureCurrentAnswer();
+  const current = getCurrentQuestion();
+  const response = getResponse(current._id);
+  response.markedForReview = true;
+  const next = getNextLocation();
+  if (next) {
+    jumpToQuestion(next.sectionIndex, next.questionIndex);
+  } else {
+    openSubmitModal();
+  }
+}
+
+function onClearResponse() {
+  const question = getCurrentQuestion();
+  const response = getResponse(question._id);
+  response.selectedOptionIds = [];
+  response.fillAnswer = "";
+  response.markedForReview = false;
+  renderQuestion();
+  renderPalette();
+  renderLiveStats();
+}
+
+function switchSection(sectionIndex) {
+  const canSwitchSections = state.test.settings?.isSectionSwitchingEnabled !== false;
+  if (!canSwitchSections || sectionIndex === state.currentSectionIndex) {
+    return;
+  }
+  captureCurrentAnswer();
+  state.currentSectionIndex = sectionIndex;
+  markCurrentQuestionVisited();
+  renderTestScreen();
+}
+
+function jumpToQuestion(sectionIndex, questionIndex) {
+  captureCurrentAnswer();
+  state.currentSectionIndex = sectionIndex;
+  state.currentQuestionIndexBySection[sectionIndex] = questionIndex;
+  markCurrentQuestionVisited();
+  renderTestScreen();
+}
+
+function markCurrentQuestionVisited() {
+  const question = getCurrentQuestion();
+  if (!question) {
+    return;
+  }
+  const response = getResponse(question._id);
+  response.visited = true;
+}
+
+function captureCurrentAnswer() {
+  const question = getCurrentQuestion();
+  if (!question) {
+    return;
+  }
+  const response = getResponse(question._id);
+  if (question.type === "fill_ups") {
+    const input = els.optionBody.querySelector(".fill-input");
+    if (input) {
+      response.fillAnswer = input.value.trim();
+    }
+    return;
+  }
+  syncChoiceAnswer(question);
+}
+
+function syncChoiceAnswer(question) {
+  const response = getResponse(question._id);
+  response.selectedOptionIds = Array.from(
+    els.optionBody.querySelectorAll(".option-input:checked")
+  ).map((input) => input.value);
+}
+
+function renderLiveStats() {
+  const live = computeLiveCounts();
+  els.liveAnswered.textContent = String(live.answered);
+  els.liveNotAnswered.textContent = String(live.notAnswered);
+  els.liveReview.textContent = String(live.review);
+}
+
+function computeLiveCounts() {
+  let answered = 0;
+  let notAnswered = 0;
+  let review = 0;
+
+  state.sections.forEach((section) => {
+    section.questions.forEach((question) => {
+      const status = getQuestionStatus(question);
+      if (status === "answered" || status === "answered-review") {
+        answered += 1;
+      }
+      if (status === "not-answered") {
+        notAnswered += 1;
+      }
+      if (status === "review" || status === "answered-review") {
+        review += 1;
+      }
+    });
+  });
+
+  return { answered, notAnswered, review };
+}
+
+function getQuestionStatus(question) {
+  const response = getResponse(question._id);
+  const answered = isAnswered(question, response);
+
+  if (response.markedForReview && answered) {
+    return "answered-review";
+  }
+  if (response.markedForReview) {
+    return "review";
+  }
+  if (answered) {
+    return "answered";
+  }
+  if (response.visited) {
+    return "not-answered";
+  }
+  return "not-visited";
+}
+
+function isAnswered(question, response) {
+  if (!response) {
+    return false;
+  }
+  if (question.type === "fill_ups") {
+    return normalizeText(response.fillAnswer).length > 0;
+  }
+  return (response.selectedOptionIds || []).length > 0;
+}
+
+function openSubmitModal() {
+  captureCurrentAnswer();
+  const total = state.flatQuestions.length;
+  const live = computeLiveCounts();
+  const attempted = live.answered;
+  const unattempted = total - attempted;
+  els.submitModalText.textContent = `Attempted ${attempted}/${total}, Unattempted ${unattempted}, Marked ${live.review}.`;
+  els.submitModal.classList.remove("hidden");
+}
+
+function closeSubmitModal() {
+  els.submitModal.classList.add("hidden");
+}
+
+function finalizeTest(autoSubmitted) {
+  if (state.submitted) {
+    return;
+  }
+  captureCurrentAnswer();
+  closeSubmitModal();
+  stopTimer();
+  state.submitted = true;
+  state.report = buildReport();
+  renderReport(autoSubmitted);
+  showScreen("report");
+}
+function buildReport() {
+  const totals = {
+    total: state.flatQuestions.length,
+    attempted: 0,
+    unattempted: 0,
+    correct: 0,
+    incorrect: 0,
+    partial: 0,
+    review: 0,
+    score: 0,
+    maxScore: 0,
+  };
+
+  const sectionReports = [];
+  const reviewItems = [];
+
+  state.sections.forEach((section, sectionIndex) => {
+    const sectionSummary = {
+      sectionName: section.name || `Section ${sectionIndex + 1}`,
+      total: section.questions.length,
+      attempted: 0,
+      correct: 0,
+      incorrect: 0,
+      partial: 0,
+      score: 0,
+    };
+
+    section.questions.forEach((question, questionIndex) => {
+      const response = getResponse(question._id);
+      const evaluation = evaluateQuestion(question, response);
+      const scoreDelta = evaluation.scoreDelta;
+      const positive = Number(question.marks?.positive) || 0;
+
+      totals.maxScore += positive;
+      totals.score += scoreDelta;
+      sectionSummary.score += scoreDelta;
+
+      if (response.markedForReview) {
+        totals.review += 1;
+      }
+
+      if (evaluation.kind === "unattempted") {
+        totals.unattempted += 1;
+      } else {
+        totals.attempted += 1;
+        sectionSummary.attempted += 1;
+      }
+
+      if (evaluation.kind === "correct") {
+        totals.correct += 1;
+        sectionSummary.correct += 1;
+      } else if (evaluation.kind === "partial") {
+        totals.partial += 1;
+        sectionSummary.partial += 1;
+      } else if (evaluation.kind === "incorrect") {
+        totals.incorrect += 1;
+        sectionSummary.incorrect += 1;
+      }
+
+      reviewItems.push({
+        sectionIndex,
+        questionIndex,
+        globalIndex: getGlobalQuestionIndex(question._id),
+        question,
+        response,
+        evaluation,
+        userAnswer: getUserAnswerText(question, response),
+        correctAnswer: getCorrectAnswerText(question),
+      });
+    });
+
+    sectionReports.push(sectionSummary);
+  });
+
+  const accuracy = totals.attempted > 0 ? (totals.correct / totals.attempted) * 100 : 0;
+  const timeUsedMs = Math.max(state.initialRemainingMs - state.remainingMs, 0);
+
+  return {
+    totals,
+    accuracy,
+    timeUsedMs,
+    sectionReports,
+    reviewItems,
+  };
+}
+
+function evaluateQuestion(question, response) {
+  const positive = Number(question.marks?.positive) || 0;
+  const negative = Number(question.marks?.negative) || 0;
+
+  if (!isAnswered(question, response)) {
+    return { kind: "unattempted", scoreDelta: 0 };
+  }
+
+  if (question.type === "fill_ups") {
+    const userText = normalizeText(response.fillAnswer);
+    const accepted = getAcceptedFillAnswers(question);
+    const matched = accepted.some((answer) => answersEquivalent(userText, normalizeText(answer)));
+    return {
+      kind: matched ? "correct" : "incorrect",
+      scoreDelta: matched ? positive : -negative,
+    };
+  }
+
+  const selected = response.selectedOptionIds || [];
+  const correctIds = (question.options || [])
+    .filter((option) => option.isCorrect)
+    .map((option) => option._id);
+
+  if (question.hasMultipleAnswers) {
+    const selectedSet = new Set(selected);
+    const correctSet = new Set(correctIds);
+    const allSelectedAreCorrect = [...selectedSet].every((id) => correctSet.has(id));
+    const allCorrectSelected = correctIds.every((id) => selectedSet.has(id));
+
+    if (selectedSet.size === correctSet.size && allCorrectSelected) {
+      return { kind: "correct", scoreDelta: positive };
+    }
+    if (selectedSet.size > 0 && allSelectedAreCorrect) {
+      return { kind: "partial", scoreDelta: positive / 2 };
+    }
+    return { kind: "incorrect", scoreDelta: -negative };
+  }
+
+  const isCorrect = selected.length === 1 && correctIds.includes(selected[0]);
+  return {
+    kind: isCorrect ? "correct" : "incorrect",
+    scoreDelta: isCorrect ? positive : -negative,
+  };
+}
+
+function renderReport(autoSubmitted) {
+  if (!state.report) {
+    return;
+  }
+
+  const { totals, accuracy, timeUsedMs } = state.report;
+  els.reportTitle.textContent = `${state.test.name || "Test"} | Report`;
+  els.reportSubtitle.textContent = `${autoSubmitted ? "Auto-submitted | " : ""}Time Used: ${formatDuration(
+    timeUsedMs
+  )}`;
+
+  const summaryItems = [
+    ["Total Questions", totals.total],
+    ["Attempted", totals.attempted],
+    ["Unattempted", totals.unattempted],
+    ["Correct", totals.correct],
+    ["Incorrect", totals.incorrect],
+    ["Partial", totals.partial],
+    ["Marked for Review", totals.review],
+    ["Accuracy", `${accuracy.toFixed(2)}%`],
+    ["Score", `${formatScore(totals.score)} / ${formatScore(totals.maxScore)}`],
+  ];
+
+  els.reportSummaryGrid.innerHTML = "";
+  summaryItems.forEach(([label, value]) => {
+    const card = document.createElement("article");
+    card.className = "summary-item";
+    card.innerHTML = `<p>${label}</p><h3>${value}</h3>`;
+    els.reportSummaryGrid.appendChild(card);
+  });
+
+  renderSectionReportTable();
+  renderReviewFilters();
+  renderReviewList();
+}
+
+function renderSectionReportTable() {
+  els.sectionReportBody.innerHTML = "";
+
+  state.report.sectionReports.forEach((summary) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(summary.sectionName)}</td>
+      <td>${summary.total}</td>
+      <td>${summary.attempted}</td>
+      <td>${summary.correct}</td>
+      <td>${summary.incorrect}</td>
+      <td>${summary.partial}</td>
+      <td>${formatScore(summary.score)}</td>
+    `;
+    els.sectionReportBody.appendChild(tr);
+  });
+}
+
+function renderReviewFilters() {
+  const items = state.report.reviewItems;
+  const counts = {
+    all: items.length,
+    correct: items.filter((item) => item.evaluation.kind === "correct").length,
+    incorrect: items.filter((item) => item.evaluation.kind === "incorrect").length,
+    partial: items.filter((item) => item.evaluation.kind === "partial").length,
+    unattempted: items.filter((item) => item.evaluation.kind === "unattempted").length,
+    marked: items.filter((item) => item.response.markedForReview).length,
+  };
+
+  const labels = {
+    all: "All",
+    correct: "Correct",
+    incorrect: "Incorrect",
+    partial: "Partial",
+    unattempted: "Unattempted",
+    marked: "Marked",
+  };
+
+  els.reviewFilters.innerHTML = "";
+
+  Object.keys(labels).forEach((key) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "filter-btn";
+    if (state.reviewFilter === key) {
+      btn.classList.add("active");
+    }
+    btn.dataset.filter = key;
+    btn.textContent = `${labels[key]} (${counts[key]})`;
+    els.reviewFilters.appendChild(btn);
+  });
+}
+
+function renderReviewList() {
+  const items = getFilteredReviewItems();
+  els.reviewList.innerHTML = "";
+
+  if (items.length === 0) {
+    els.reviewList.innerHTML = `<div class="empty-state">No questions in this filter.</div>`;
+    return;
+  }
+
+  items.forEach((item) => {
+    const review = document.createElement("article");
+    review.className = "review-item";
+
+    const sectionName = state.sections[item.sectionIndex].name || `Section ${item.sectionIndex + 1}`;
+    const statusClass = `status-${item.evaluation.kind}`;
+    const statusText = item.evaluation.kind;
+
+    review.innerHTML = `
+      <div class="review-top">
+        <h4>Q${item.globalIndex} | ${escapeHtml(sectionName)}</h4>
+        <span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span>
+      </div>
+      <div class="question-body">${getQuestionReviewHtml(item.question)}</div>
+      <div class="answer-grid">
+        <article>
+          <p>Your Answer</p>
+          <h4>${escapeHtml(item.userAnswer)}</h4>
+        </article>
+        <article>
+          <p>Correct Answer</p>
+          <h4>${escapeHtml(item.correctAnswer)}</h4>
+        </article>
+      </div>
+      <div class="review-options">${getReviewOptionsHtml(item.question, item.response)}</div>
+      ${
+        state.data?.showReportQuestion === false
+          ? ""
+          : `<div class="solution-block">
+               <p class="solution-label">Official Solution</p>
+               <div class="solution-html">${getSolutionHtml(item.question)}</div>
+             </div>`
+      }
+    `;
+    els.reviewList.appendChild(review);
+  });
+}
+
+function getFilteredReviewItems() {
+  const items = state.report.reviewItems;
+  if (state.reviewFilter === "all") {
+    return items;
+  }
+  if (state.reviewFilter === "marked") {
+    return items.filter((item) => item.response.markedForReview);
+  }
+  return items.filter((item) => item.evaluation.kind === state.reviewFilter);
+}
+function getCurrentSection() {
+  return state.sections[state.currentSectionIndex];
+}
+
+function getCurrentQuestion() {
+  const section = getCurrentSection();
+  const questionIndex = state.currentQuestionIndexBySection[state.currentSectionIndex];
+  return section.questions[questionIndex];
+}
+
+function getResponse(questionId) {
+  return state.responses.get(questionId);
+}
+
+function getGlobalQuestionIndex(questionId) {
+  const found = state.flatQuestions.find((entry) => entry.questionId === questionId);
+  return found ? found.globalIndex : 0;
+}
+
+function getPreviousLocation() {
+  const sectionIndex = state.currentSectionIndex;
+  const questionIndex = state.currentQuestionIndexBySection[sectionIndex];
+
+  if (questionIndex > 0) {
+    return { sectionIndex, questionIndex: questionIndex - 1 };
+  }
+
+  for (let prevSectionIndex = sectionIndex - 1; prevSectionIndex >= 0; prevSectionIndex -= 1) {
+    const count = state.sections[prevSectionIndex].questions.length;
+    if (count > 0) {
+      return { sectionIndex: prevSectionIndex, questionIndex: count - 1 };
+    }
+  }
+  return null;
+}
+
+function getNextLocation() {
+  const sectionIndex = state.currentSectionIndex;
+  const questionIndex = state.currentQuestionIndexBySection[sectionIndex];
+  const currentCount = state.sections[sectionIndex].questions.length;
+
+  if (questionIndex < currentCount - 1) {
+    return { sectionIndex, questionIndex: questionIndex + 1 };
+  }
+
+  for (let nextSectionIndex = sectionIndex + 1; nextSectionIndex < state.sections.length; nextSectionIndex += 1) {
+    if (state.sections[nextSectionIndex].questions.length > 0) {
+      return { sectionIndex: nextSectionIndex, questionIndex: 0 };
+    }
+  }
+  return null;
+}
+
+function getQuestionTypeLabel(question) {
+  if (question.type === "fill_ups") {
+    return "Fill Ups";
+  }
+  if (question.hasMultipleAnswers) {
+    return "Multi Correct";
+  }
+  return "Single Correct";
+}
+
+function getAcceptedFillAnswers(question) {
+  return (question.options || [])
+    .filter((option) => option.isCorrect && Array.isArray(option.solution))
+    .flatMap((option) => option.solution)
+    .map((value) => String(value))
+    .filter((value) => value.trim().length > 0);
+}
+
+function getUserAnswerText(question, response) {
+  if (!isAnswered(question, response)) {
+    return "Not answered";
+  }
+  if (question.type === "fill_ups") {
+    return response.fillAnswer.trim();
+  }
+  const optionMap = buildOptionMap(question.options || []);
+  return (response.selectedOptionIds || [])
+    .map((id) => optionMap.get(id) || id)
+    .join(", ");
+}
+
+function getCorrectAnswerText(question) {
+  if (question.type === "fill_ups") {
+    const accepted = getAcceptedFillAnswers(question);
+    return accepted.length > 0 ? accepted.join(" / ") : "-";
+  }
+  const optionMap = buildOptionMap(question.options || []);
+  const correctIds = (question.options || []).filter((option) => option.isCorrect).map((option) => option._id);
+  return correctIds.map((id) => optionMap.get(id) || id).join(", ");
+}
+
+function buildOptionMap(options) {
+  const map = new Map();
+  options.forEach((option, index) => {
+    const prefix = `${String.fromCharCode(65 + index)}. `;
+    const text = extractOptionText(option);
+    map.set(option._id, `${prefix}${text}`);
+  });
+  return map;
+}
+
+function extractOptionText(option) {
+  if (option.nameText && normalizeText(option.nameText).length > 0) {
+    return option.nameText.trim();
+  }
+  if (option.name) {
+    return stripHtml(option.name);
+  }
+  return "Option";
+}
+
+function getQuestionReviewHtml(question) {
+  const pieces = [];
+  if (question.paragraph) {
+    pieces.push(question.paragraph);
+  }
+  if (question.name) {
+    pieces.push(question.name);
+  } else if (question.nameText) {
+    pieces.push(`<p>${escapeHtml(question.nameText)}</p>`);
+  }
+  return pieces.join("");
+}
+
+function getReviewOptionsHtml(question, response) {
+  if (question.type === "fill_ups") {
+    const accepted = getAcceptedFillAnswers(question);
+    const acceptedText = accepted.length > 0 ? accepted.join(" / ") : "-";
+    return `
+      <div class="review-option">
+        <div class="review-option-head">
+          <strong>Accepted Answer</strong>
+        </div>
+        <div>${escapeHtml(acceptedText)}</div>
+      </div>
+    `;
+  }
+
+  return (question.options || [])
+    .map((option, index) => {
+      const isCorrect = Boolean(option.isCorrect);
+      const isSelected = (response.selectedOptionIds || []).includes(option._id);
+      const optionHtml = option.name || `<p>${escapeHtml(option.nameText || "")}</p>`;
+      return `
+        <div class="review-option">
+          <div class="review-option-head">
+            <strong>Option ${String.fromCharCode(65 + index)}</strong>
+            <div class="review-option-tags">
+              ${isCorrect ? '<span class="tag tag-correct">Correct</span>' : ""}
+              ${isSelected ? '<span class="tag tag-selected">Your Choice</span>' : ""}
+            </div>
+          </div>
+          <div>${optionHtml}</div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function getSolutionHtml(question) {
+  const raw = String(question.solution || "").trim();
+  if (!raw) {
+    return "<p>Solution not available.</p>";
+  }
+  return raw.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+}
+
+function answersEquivalent(a, b) {
+  const n1 = Number(a);
+  const n2 = Number(b);
+
+  if (
+    normalizeText(a).length > 0 &&
+    normalizeText(b).length > 0 &&
+    Number.isFinite(n1) &&
+    Number.isFinite(n2)
+  ) {
+    return Math.abs(n1 - n2) < 1e-9;
+  }
+  return normalizeText(a) === normalizeText(b);
+}
+
+function cleanLabel(value) {
+  return String(value || "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeText(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+}
+
+function formatDuration(ms) {
+  const totalSeconds = Math.max(Math.floor(ms / 1000), 0);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(
+    seconds
+  ).padStart(2, "0")}`;
+}
+
+function formatScore(value) {
+  const rounded = Math.round(value * 100) / 100;
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(2);
+}
+
+function stripHtml(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return (div.textContent || div.innerText || "").trim().replace(/\s+/g, " ");
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function applySavedTheme() {
+  try {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme === "dark") {
+      document.body.classList.add("theme-dark");
+    } else {
+      document.body.classList.remove("theme-dark");
+    }
+  } catch (error) {
+    document.body.classList.remove("theme-dark");
+  }
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("theme-dark");
+  const activeTheme = document.body.classList.contains("theme-dark") ? "dark" : "bright";
+  try {
+    localStorage.setItem(THEME_KEY, activeTheme);
+  } catch (error) {
+    // no-op when localStorage is unavailable
+  }
+  updateThemeToggleLabel();
+}
+
+function updateThemeToggleLabel() {
+  if (!els.themeToggleBtn) {
+    return;
+  }
+  const isDark = document.body.classList.contains("theme-dark");
+  els.themeToggleBtn.textContent = isDark ? "Bright Mode" : "Dark Mode";
+}
+
+function showFatalError(message) {
+  els.fatalError.classList.remove("hidden");
+  els.fatalError.textContent = message;
+}
+
+</script>
+<script src="/assets/calculator.js" defer data-bijzli-calc-loader="true"></script>
+</body>
+</html>

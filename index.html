@@ -1438,6 +1438,60 @@ let calYear = new Date().getFullYear();
 function loadProgress(){
   try{ progress = JSON.parse(localStorage.getItem('gate_progress')||'{}') }
   catch(e){ progress = {} }
+  // migrate old flat progress to attempts history (backward compatible)
+  try {
+    Object.keys(progress).forEach(id=>{
+      if(id.startsWith('__')) return;
+      const pr = progress[id];
+      if(!pr || typeof pr !== 'object') return;
+      if(!Array.isArray(pr.attempts)){
+        // old format – convert to history
+        const hasData = pr.status || pr.score != null || pr.date || pr.correct != null;
+        if(hasData){
+          const att = {
+            attemptNo: 1,
+            date: pr.date || new Date().toISOString().split('T')[0],
+            score: pr.score ?? null,
+            correct: pr.correct ?? null,
+            wrong: pr.wrong ?? null,
+            unattempted: pr.unattempted ?? null,
+            mistake: pr.mistake || null,
+            topic: pr.topic || null,
+            correction: pr.correction || null,
+            notes: pr.notes || null,
+            driveLink: pr.driveLink || null,
+            timestamp: (pr.date || new Date().toISOString().split('T')[0]) + 'T12:00:00Z'
+          };
+          pr.attempts = [att];
+          pr.attemptCount = 1;
+          pr.bestScore = pr.score ?? null;
+          pr.lastAttemptDate = pr.date || null;
+        } else {
+          pr.attempts = [];
+          pr.attemptCount = 0;
+        }
+      }
+      // ensure derived fields
+      if(Array.isArray(pr.attempts) && pr.attempts.length){
+        pr.attemptCount = pr.attempts.length;
+        const scores = pr.attempts.map(a=>a.score).filter(s=>s!=null);
+        pr.bestScore = scores.length ? Math.max(...scores) : null;
+        const last = pr.attempts[pr.attempts.length-1];
+        // keep top-level fields in sync with latest (for backward compat)
+        pr.score = last.score ?? pr.score;
+        pr.correct = last.correct ?? pr.correct;
+        pr.wrong = last.wrong ?? pr.wrong;
+        pr.unattempted = last.unattempted ?? pr.unattempted;
+        pr.date = last.date ?? pr.date;
+        pr.notes = last.notes ?? pr.notes;
+        pr.mistake = last.mistake ?? pr.mistake;
+        pr.topic = last.topic ?? pr.topic;
+        pr.correction = last.correction ?? pr.correction;
+        pr.driveLink = last.driveLink ?? pr.driveLink;
+        pr.lastAttemptDate = last.date;
+      }
+    });
+  } catch(e){ console.warn('migration failed', e)}
 }
 function saveProgressLS(){
   localStorage.setItem('gate_progress', JSON.stringify(progress));
@@ -1785,7 +1839,7 @@ function renderTests(filtered){
         const subjBadge=`<span class="badge badge-subj" style="background:${subj.color}22;color:${subj.color}">${subj.icon} ${subj.name}</span>`;
         const dotCls=status==='completed'?'completed':status==='attempted'?'attempted':'';
         let scoreHtml='';
-        if(p.score!=null) scoreHtml=`<span class="tc-score"><span class="tc-score-val" style="color:${p.score>=60?'var(--success)':p.score>=40?'var(--gold)':'var(--danger)'}">${p.score}%</span></span>`;
+        if(p.score!=null) scoreHtml=`<span class="tc-score"><span class="tc-score-val" style="color:${p.score>=60?'var(--success)':p.score>=40?'var(--gold)':'var(--danger)'}">${p.score}%</span>${p.attemptCount>1?`<span style="font-size:10px;color:var(--muted);margin-left:4px">· #${p.attemptCount} · Best ${p.bestScore}%</span>`:p.attemptCount===1?`<span style="font-size:10px;color:var(--muted);margin-left:4px">· Attempt 1</span>`:''}</span>`;
         let dateHtml='';
         if(p.date) dateHtml=`<span class="tc-date">${p.date}</span>`;
         let noteHtml='';
@@ -1793,7 +1847,7 @@ function renderTests(filtered){
         const isAttempted = status==='attempted' || status==='completed';
         // card click opens edit if not attempted, else detail
         card.style.cursor='pointer';
-        card.onclick = (ev)=>{ if(ev.target.closest('button, a')) return; if(isAttempted){ openDetailModal(test.id, ev);} else { openMarkModal(test.id, ev);} };
+        card.onclick = (ev)=>{ if(ev.target.closest('button, a')) return; openMarkModal(test.id, ev); };
 
         let statsHtml = '';
         if(isAttempted){
@@ -1837,9 +1891,10 @@ function renderTests(filtered){
           ${correctionHtml}
           ${noteHtml}
           <div class="tc-actions">
-            <span class="tc-attempted-badge">✓ Attempted</span>
-            <button class="tc-btn tc-btn-detail" onclick="openDetailModal('${test.id}',event)" style="margin-left:auto">Details</button>
-            ${p.driveLink ? `<button class="tc-drive-btn" onclick="openRevisionItem('${test.id}',event);event.stopPropagation()" title="Open Drive link">📁 Drive</button>` : ''}
+            <button class="tc-btn tc-btn-open" onclick="openTest('${test.id}',event)">↻ Open</button>
+            <button class="tc-btn tc-btn-mark" onclick="openMarkModal('${test.id}',event)">✎ Mark / Re-attempt</button>
+            <button class="tc-btn tc-btn-detail" onclick="openDetailModal('${test.id}',event)">Details</button>
+            ${p.driveLink ? `<button class="tc-drive-btn" onclick="openRevisionItem('${test.id}',event);event.stopPropagation()" title="Open Drive link">📁</button>` : ''}
           </div>`;
         }
         grid.appendChild(card);
@@ -1865,11 +1920,40 @@ function openTest(id, e){
   e.stopPropagation();
   const test = ALL_TESTS.find(x=>x.id===id);
   if(!test) return;
-  const p = progress[id] || {};
-  // Prefer Google Drive link if user saved one, otherwise open local test file
-  const url = p.driveLink || encodeTestPath(test.path);
+  const p = progress[id] ||= {status:'not-started', attempts:[]};
+  if(!Array.isArray(p.attempts)) p.attempts = [];
+  const today = new Date().toISOString().split('T')[0];
+  const last = p.attempts[p.attempts.length-1];
+  // if no attempts yet, or last attempt is scored/completed, start a new attempt on Open
+  const needNewAttempt = !last || (last.score != null) || last.date !== today;
+  if(needNewAttempt){
+    const attemptNo = p.attempts.length + 1;
+    const newAtt = {
+      attemptNo,
+      date: today,
+      score: null,
+      correct: null,
+      wrong: null,
+      unattempted: null,
+      mistake: null,
+      topic: null,
+      correction: null,
+      notes: p.notes || null,
+      driveLink: p.driveLink || null,
+      timestamp: new Date().toISOString()
+    };
+    p.attempts.push(newAtt);
+    p.attemptCount = p.attempts.length;
+    p.status = 'attempted';
+    p.date = today;
+    p.lastAttemptDate = today;
+    saveProgressLS();
+    render();
+    showToast(`Attempt #${attemptNo} started`);
+  }
+  // open Drive link if available, else test file
+  const url = (p.driveLink) || encodeTestPath(test.path);
   window.open(url,'_blank');
-  showToast('Test opened – use Mark to record your attempt');
 }
 
 function encodeTestPath(p){
@@ -1881,31 +1965,34 @@ function encodeTestPath(p){
 // ═══════════════════════════════════════════════════════
 function openMarkModal(id, e){
   if(e) e.stopPropagation();
-  const pCheck = progress[id]||{status:'not-started'};
-  if(pCheck.status==='attempted' || pCheck.status==='completed'){
-    openDetailModal(id, e);
-    showToast('Already attempted – view only');
-    return;
-  }
   activeMarkId=id;
   const test=ALL_TESTS.find(x=>x.id===id);
-  const p=progress[id]||{status:'not-started'};
-  document.getElementById('mark-modal-title').textContent=test.name;
-  document.getElementById('mark-modal-sub').textContent=`${SUBJ[test.subj]?.name} · ${TYPE_LABELS[test.type]} · ${test.year}`;
+  const p=progress[id]||{status:'not-started', attempts:[]};
+  if(!Array.isArray(p.attempts)) p.attempts=[];
+  const last = p.attempts[p.attempts.length-1] || p;
+  const nextAttemptNo = p.attempts.length ? p.attempts.length + 1 : 1;
+  const editingExisting = last && last.score == null;
+  const attemptNo = editingExisting ? last.attemptNo : nextAttemptNo;
+  document.getElementById('mark-modal-title').textContent = test.name + ` · Attempt #${attemptNo}`;
+  document.getElementById('mark-modal-sub').textContent=`${SUBJ[test.subj]?.name} · ${TYPE_LABELS[test.type]} · ${test.year} · ${p.attemptCount ? p.attemptCount + ' previous attempt(s)' : 'First attempt'}`;
   document.querySelectorAll('.status-btn').forEach(b=>b.className='status-btn');
-  const sel=document.querySelector(`.status-btn[data-val="${p.status||'not-started'}"]`);
+  const selStatus = last.status || p.status || 'attempted';
+  const sel=document.querySelector(`.status-btn[data-val="${['not-started','attempted','completed'].includes(selStatus)?selStatus:'attempted'}"]`);
   if(sel) selectStatus(sel);
-  document.getElementById('mark-score').value=p.score!=null?p.score:'';
-  document.getElementById('mark-correct').value=p.correct!=null?p.correct:'';
-  document.getElementById('mark-wrong').value=p.wrong!=null?p.wrong:'';
-  document.getElementById('mark-unattempted').value=p.unattempted!=null?p.unattempted:'';
-  document.getElementById('mark-mistake').value=p.mistake||'';
-  document.getElementById('mark-topic').value=p.topic||'';
-  document.getElementById('mark-correction').value=p.correction||'';
+  // prefill with last attempt data (so user can edit)
+  document.getElementById('mark-score').value = last.score != null ? last.score : '';
+  document.getElementById('mark-correct').value = last.correct != null ? last.correct : '';
+  document.getElementById('mark-wrong').value = last.wrong != null ? last.wrong : '';
+  document.getElementById('mark-unattempted').value = last.unattempted != null ? last.unattempted : '';
+  document.getElementById('mark-mistake').value = last.mistake || '';
+  document.getElementById('mark-topic').value = last.topic || '';
+  document.getElementById('mark-correction').value = last.correction || '';
   updateMarkAccuracy();
-  document.getElementById('mark-date').value=p.date||new Date().toISOString().split('T')[0];
-  document.getElementById('mark-notes').value=p.notes||'';
-  const driveEl=document.getElementById('mark-drive'); if(driveEl) driveEl.value=p.driveLink||'';
+  document.getElementById('mark-date').value = last.date || new Date().toISOString().split('T')[0];
+  document.getElementById('mark-notes').value = last.notes || '';
+  const driveEl=document.getElementById('mark-drive'); if(driveEl) driveEl.value = last.driveLink || p.driveLink || '';
+  // store whether we are editing an existing blank attempt
+  activeMarkEditingAttemptNo = editingExisting ? last.attemptNo : null;
   document.getElementById('mark-modal').classList.add('open');
 }
 
@@ -1923,7 +2010,7 @@ function updateMarkAccuracy(){
 }
 function saveProgress(){
   const id=activeMarkId; if(!id) return;
-  const status=document.querySelector('.status-btn[class*="sel-"]')?.dataset.val||'not-started';
+  const status=document.querySelector('.status-btn[class*="sel-"]')?.dataset.val||'attempted';
   const score=document.getElementById('mark-score').value;
   const date=document.getElementById('mark-date').value;
   const notes=document.getElementById('mark-notes').value.trim();
@@ -1935,11 +2022,61 @@ function saveProgress(){
   const correction=document.getElementById('mark-correction').value.trim();
   const driveEl=document.getElementById('mark-drive');
   const driveLink=driveEl ? driveEl.value.trim() : '';
-  progress[id]={status,score:score!==''?parseInt(score):undefined,date,notes,correct:correct!==''?parseInt(correct):undefined,wrong:wrong!==''?parseInt(wrong):undefined,unattempted:unattempted!==''?parseInt(unattempted):undefined,mistake:mistake||undefined,topic:topic||undefined,correction:correction||undefined,driveLink:driveLink||undefined};
+
+  const p = progress[id] ||= {status:'not-started', attempts:[]};
+  if(!Array.isArray(p.attempts)) p.attempts = [];
+
+  const attemptData = {
+    score: score!==''?parseInt(score):null,
+    correct: correct!==''?parseInt(correct):null,
+    wrong: wrong!==''?parseInt(wrong):null,
+    unattempted: unattempted!==''?parseInt(unattempted):null,
+    mistake: mistake || null,
+    topic: topic || null,
+    correction: correction || null,
+    notes: notes || null,
+    driveLink: driveLink || null,
+    date: date || new Date().toISOString().split('T')[0],
+    timestamp: new Date().toISOString()
+  };
+
+  let attempt;
+  // if editing an existing blank attempt (from Open), update it in place
+  if(activeMarkEditingAttemptNo){
+    attempt = p.attempts.find(a=>a.attemptNo===activeMarkEditingAttemptNo);
+    if(attempt){ Object.assign(attempt, attemptData); }
+  }
+  if(!attempt){
+    // create new attempt record
+    attempt = {
+      attemptNo: p.attempts.length + 1,
+      ...attemptData
+    };
+    p.attempts.push(attempt);
+  }
+
+  // update top-level summary fields (latest)
+  p.status = status;
+  p.score = attempt.score;
+  p.correct = attempt.correct;
+  p.wrong = attempt.wrong;
+  p.unattempted = attempt.unattempted;
+  p.date = attempt.date;
+  p.notes = attempt.notes;
+  p.mistake = attempt.mistake;
+  p.topic = attempt.topic;
+  p.correction = attempt.correction;
+  p.driveLink = attempt.driveLink;
+  p.attemptCount = p.attempts.length;
+  p.lastAttemptDate = attempt.date;
+  const scores = p.attempts.map(a=>a.score).filter(s=>s!=null);
+  p.bestScore = scores.length ? Math.max(...scores) : null;
+
   saveProgressLS();
   closeModalById('mark-modal');
   render();
-  showToast('✓ Progress saved');
+  showToast(`✓ Attempt #${attempt.attemptNo} saved`);
+  activeMarkEditingAttemptNo = null;
 }
 
 
@@ -1951,24 +2088,42 @@ function openDetailModal(id, e){
   const test = ALL_TESTS.find(x=>x.id===id);
   if(!test) return;
   const p = progress[id]||{};
+  const attempts = Array.isArray(p.attempts) ? p.attempts.slice().reverse() : [];
+  const latest = attempts[0] || p;
+  const score = latest.score != null ? latest.score : '—';
+  const scoreColor = latest.score>=60 ? 'var(--success)' : latest.score>=40 ? 'var(--gold)' : 'var(--danger)';
+  const correct = latest.correct ?? '–';
+  const wrong = latest.wrong ?? '–';
+  const unatt = latest.unattempted ?? '–';
+  const attempted = (Number(latest.correct||0)+Number(latest.wrong||0));
+  const total = attempted + Number(latest.unattempted||0);
+  const acc = attempted>0 ? Math.round(Number(latest.correct||0)/attempted*100) : null;
   document.getElementById('detail-modal-title').textContent = test.name;
-  document.getElementById('detail-modal-sub').textContent = `${SUBJ[test.subj]?.name} · ${TYPE_LABELS[test.type]} · ${test.year}`;
+  document.getElementById('detail-modal-sub').textContent = `${SUBJ[test.subj]?.name} · ${TYPE_LABELS[test.type]} · ${test.year} · ${p.attemptCount||0} attempt(s)${p.bestScore!=null ? ` · Best ${p.bestScore}%` : ''}`;
   const body = document.getElementById('detail-modal-body');
-  const score = p.score != null ? p.score : '—';
-  const scoreColor = p.score>=60 ? 'var(--success)' : p.score>=40 ? 'var(--gold)' : 'var(--danger)';
-  const correct = p.correct ?? '–';
-  const wrong = p.wrong ?? '–';
-  const unatt = p.unattempted ?? '–';
-  const attempted = (Number(p.correct||0)+Number(p.wrong||0));
-  const total = attempted + Number(p.unattempted||0);
-  const acc = attempted>0 ? Math.round(Number(p.correct||0)/attempted*100) : null;
+  const historyHtml = attempts.length > 1 ? `
+    <div class="detail-block">
+      <div class="detail-block-label">Attempt History (${attempts.length})</div>
+      <div style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto">
+        ${attempts.map(a=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg);border-radius:8px;font-size:12px">
+            <span><b>#${a.attemptNo}</b> · ${a.date || '—'}</span>
+            <span style="font-family:var(--font-mono);font-weight:700;color:${a.score>=60?'var(--success)':a.score>=40?'var(--gold)':'var(--danger)'}">${a.score!=null ? a.score+'%' : '—'}</span>
+            <span style="color:var(--muted)">${a.correct??'–'}/${a.wrong??'–'}/${a.unattempted??'–'}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : '';
   body.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase">Score</div>
-      <div class="detail-score-big" style="color:${scoreColor}">${score}${p.score!=null?'%':''}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);text-transform:uppercase">Latest Score</div>
+      <div class="detail-score-big" style="color:${scoreColor}">${score}${latest.score!=null?'%':''}</div>
+      <div style="font-size:11px;color:var(--muted-2)">Attempt #${latest.attemptNo || p.attemptCount || 1}${p.bestScore!=null && p.bestScore !== latest.score ? ` · Best: ${p.bestScore}%` : ''}</div>
+      </div>
       <div style="text-align:right;font-size:12px;color:var(--muted-2)">
-        <div>Date: <b style="color:var(--text)">${p.date||'—'}</b></div>
+        <div>Date: <b style="color:var(--text)">${latest.date||'—'}</b></div>
         <div>Status: <b style="color:${p.status==='completed'?'var(--success)':p.status==='attempted'?'var(--gold)':'var(--muted)'}">${p.status||'not-started'}</b></div>
+        <div>Attempts: <b>${p.attemptCount||0}</b></div>
       </div>
     </div>
     <div class="detail-grid">
@@ -1977,14 +2132,18 @@ function openDetailModal(id, e){
       <div class="detail-stat"><div class="detail-stat-val" style="color:var(--muted-2)">${unatt}</div><div class="detail-stat-lbl">Unattempted</div></div>
     </div>
     ${acc!==null ? `<div style="font-size:12px;color:var(--muted)">Accuracy: <b style="color:${acc>=70?'var(--success)':acc>=50?'var(--gold)':'var(--danger)'}">${acc}%</b> · Attempt rate: ${total>0?Math.round(attempted/total*100):0}%</div>` : ''}
-    ${p.mistake || p.topic ? `<div class="detail-block"><div class="detail-block-label">Mistake / Weak Topic</div><div class="detail-block-text">${[p.mistake, p.topic].filter(Boolean).join(' · ')||'—'}</div></div>` : ''}
-    ${p.correction ? `<div class="detail-block"><div class="detail-block-label">Correction / Lesson Learned</div><div class="detail-block-text">${p.correction}</div></div>` : ''}
-    ${p.notes ? `<div class="detail-block"><div class="detail-block-label">Notes</div><div class="detail-block-text">${p.notes}</div></div>` : ''}
-    ${p.driveLink ? `<div style=\"margin-top:12px\"><button class=\"drive-open-btn\" id=\"detail-drive-btn\">📁 Open Google Drive Link</button></div>` : `<div style=\"margin-top:10px;font-size:12px;color:var(--muted)\">No Drive link saved.</div>`}
-    <div style="margin-top:14px;font-size:11px;color:var(--muted);text-align:center">This test is locked – attempted tests cannot be edited.</div>
+    ${latest.mistake || latest.topic ? `<div class="detail-block"><div class="detail-block-label">Mistake / Weak Topic</div><div class="detail-block-text">${[latest.mistake, latest.topic].filter(Boolean).join(' · ')||'—'}</div></div>` : ''}
+    ${latest.correction ? `<div class="detail-block"><div class="detail-block-label">Correction / Lesson Learned</div><div class="detail-block-text">${latest.correction}</div></div>` : ''}
+    ${latest.notes ? `<div class="detail-block"><div class="detail-block-label">Notes</div><div class="detail-block-text">${latest.notes}</div></div>` : ''}
+    ${historyHtml}
+    ${latest.driveLink ? `<div style="margin-top:12px"><button class="drive-open-btn" id="detail-drive-btn">📁 Open Google Drive Link</button></div>` : `<div style="margin-top:10px;font-size:12px;color:var(--muted)">No Drive link saved.</div>`}
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn-primary" onclick="closeModalById('detail-modal'); openMarkModal('${id}') " style="padding:8px 14px">✎ Mark / Re-attempt</button>
+      <button class="btn-outline" onclick="openTest('${id}', event)" style="padding:8px 14px">↻ Open Test</button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);text-align:center">History is preserved – each Mark save creates a new attempt record.</div>
   `;
-  // fix drive link escaping - inject properly
-  const driveBtn = document.getElementById('detail-drive-btn'); if(driveBtn && p.driveLink){ driveBtn.onclick = ()=> window.open(p.driveLink, '_blank'); }
+  const driveBtn = document.getElementById('detail-drive-btn'); if(driveBtn && latest.driveLink){ driveBtn.onclick = ()=> window.open(latest.driveLink, '_blank'); }
   document.getElementById('detail-modal').classList.add('open');
 }
 
@@ -2333,5 +2492,5 @@ function showToast(msg){
   },100);
 })();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0aa06802cd9598e',t:'MTc4MTI3OTU3NQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0b4f259ef7414c8',t:'MTc4MTM5NDA5Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
